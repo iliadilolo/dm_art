@@ -1,0 +1,64 @@
+{%  extends "base.html" %}
+
+{% block content %}
+
+<form class="mt-5" method="POST" action="." enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        {{ form.as_p }}
+    </div>
+    <div>
+        {{ formset.management_form }}
+        <div class="pb-3 border-b mt-5" id="attachments">
+            {% for form in formset %}
+            <div>
+                {{ form.as_p }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <button class="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 mt-3" id="add-attachment-btn">
+        Add attachment
+    </button>
+    <button type="submit" class="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 mt-3">
+        Save
+    </button>
+</form>
+
+    <div class="hidden" id="blank-form">
+    {{ formset.empty_form }}
+</div>
+
+<script>
+   const blankFormEl = document.querySelector("#blank-form")
+   const attachmentContainer = document.querySelector("#attachments")
+   const addAttachmentBtn = document.querySelector("#add-attachment-btn")
+   const managementFormInputEl = document.querySelector("#id_form-TOTAL_FORMS")
+   addAttachmentBtn.addEventListener("click", handleAttachmentBtnClick)
+    function cloneBlankForm(){
+        if (blankFormEl) {
+            const newBlankForm = blankFormEl.cloneNode(true)
+            const totalFormValue = parseInt(managementFormInputEl.value)
+            var formRegex = new RegExp(`__prefix__`, 'g');
+            newBlankForm.innerHTML = newBlankForm.innerHTML.replace(formRegex, totalFormValue)
+            managementFormInputEl.value = totalFormValue + 1
+            newBlankForm.classList.add("attachment-form")
+            newBlankForm.classList.remove("hidden")
+            newBlankForm.removeAttribute("id")
+            // console.log(newBlankForm)
+            return newBlankForm
+        }
+    }
+
+    function handleAttachmentBtnClick(event) {
+        if (event){
+            event.preventDefault()
+        }
+        const newForm = cloneBlankForm()
+        attachmentContainer.appendChild(newForm)
+    }
+
+</script>
+
+
+{% endblock %}

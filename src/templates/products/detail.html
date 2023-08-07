@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="flex flex-col md:flex-row">
+        <div class="w-full md:w-1/2 space-y-4">
+            <div>
+                <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+                    {{ object.name }}
+                </h1>
+                <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+                    {{ object.description }}
+                </p>
+                <p class="text-gray-500 dark:text-gray-400">
+                    Join us on this artistic journey, where the digital canvas becomes a gateway to limitless expression, and creativity knows no bounds.
+                </p>
+            </div>
+
+            {% include 'products/attachments-table.html' with attachments=attachments is_owner=is_owner %}
+
+            {% if form %}
+                <h3>Update Product</h3>
+                <form method="POST" action="." class="space-y-4" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                        Submit
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="w-full md:w-1/2 space-y-2 space-x-4">
+            {% if object.image %}
+            <div class="grid gap-4">
+                <div>
+                    <img class="h-auto max-w-full rounded-lg" src="{{ object.image.url }}" alt="">
+                </div>
+            </div>
+            {% endif %}
+            {% if is_owner %}
+                <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+                You own this product.
+                </p>
+            {% else %}
+                <div>
+                    {% include 'purchases/buy-btn-form.html' with product=object %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
